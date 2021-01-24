@@ -23,7 +23,7 @@ public class NoticeController {
 	@Autowired
 	private NoticeRepository noticeRepository;
 	
-	//get All notices
+	//get All notices 
 	@GetMapping("/notices")
 	public List<Notice> getAllNotices() {
 		return noticeRepository.findAll();
@@ -35,6 +35,8 @@ public class NoticeController {
 		Notice notice  = noticeRepository.findById(noticeId).orElseThrow(() -> new ResourceNotFoundException("Notice not found with id="+noticeId));
 		return ResponseEntity.ok(notice);
 	}
+	
+	//get notice by opening date and closing date - tobe done
 	
 	//create new Notice
 	@PostMapping("/notices")

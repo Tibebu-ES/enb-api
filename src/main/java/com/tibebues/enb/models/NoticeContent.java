@@ -1,5 +1,7 @@
 package com.tibebues.enb.models;
 
+import java.sql.Blob;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -22,8 +25,12 @@ public class NoticeContent {
 	@Column(name = "type")
 	private String type;
 	
-	@Column(name = "address")
-	private String address ;
+	@Column(name = "video_url")
+	private String videoURL ;
+	
+	
+	@Column(name = "notice_image")
+	private byte[] image;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "notice_id")
@@ -34,12 +41,14 @@ public class NoticeContent {
 	public NoticeContent() {
 		super();
 	}
+	
+
 
 	public NoticeContent(long id, String type, String address) {
 		super();
 		this.id = id;
 		this.type = type;
-		this.address = address;
+		this.videoURL = address;
 	}
 
 	public long getId() {
@@ -58,12 +67,22 @@ public class NoticeContent {
 		this.type = type;
 	}
 
-	public String getAddress() {
-		return address;
+	
+
+	public byte[] getImage() {
+		return image;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+
+	public String getVideoURL() {
+		return videoURL;
+	}
+
+	public void setVideoURL(String videoURL) {
+		this.videoURL = videoURL;
 	}
 
 	public Notice getNotice() {
