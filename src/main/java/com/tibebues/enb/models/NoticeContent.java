@@ -25,12 +25,10 @@ public class NoticeContent {
 	@Column(name = "type")
 	private String type;
 	
-	@Column(name = "video_url")
-	private String videoURL ;
+	@Column(name = "notice_url")
+	private String noticeURL ;
 	
 	
-	@Column(name = "notice_image")
-	private byte[] image;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "notice_id")
@@ -44,11 +42,11 @@ public class NoticeContent {
 	
 
 
-	public NoticeContent(long id, String type, String address) {
+	public NoticeContent(long id, String type, String noticeURL) {
 		super();
 		this.id = id;
 		this.type = type;
-		this.videoURL = address;
+		this.noticeURL = noticeURL;
 	}
 
 	public long getId() {
@@ -69,21 +67,17 @@ public class NoticeContent {
 
 	
 
-	public byte[] getImage() {
-		return image;
+	public String getNoticeURL() {
+		return noticeURL;
 	}
 
-	public void setImage(byte[] image) {
-		this.image = image;
+
+
+	public void setNoticeURL(String noticeURL) {
+		this.noticeURL = noticeURL;
 	}
 
-	public String getVideoURL() {
-		return videoURL;
-	}
 
-	public void setVideoURL(String videoURL) {
-		this.videoURL = videoURL;
-	}
 
 	public Notice getNotice() {
 		return notice;
