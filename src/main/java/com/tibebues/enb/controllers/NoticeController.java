@@ -1,5 +1,10 @@
 package com.tibebues.enb.controllers;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,16 +17,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tibebues.enb.exceptions.ResourceNotFoundException;
 import com.tibebues.enb.models.Notice;
+import com.tibebues.enb.models.NoticeContent;
+import com.tibebues.enb.repositories.NoticeContentRepository;
 import com.tibebues.enb.repositories.NoticeRepository;
+import com.tibebues.enb.service.FileStorageService;
 
 @RestController
 public class NoticeController {
 	@Autowired
 	private NoticeRepository noticeRepository;
+	@Autowired
+	private NoticeContentRepository noticeContentRepository;
+
+	@Autowired
+	private FileStorageService fileStorageService;
 	
 	//get All notices 
 	@GetMapping("/notices")
@@ -42,6 +57,43 @@ public class NoticeController {
 	@PostMapping("/notices")
 	public Notice createNewNotice(@RequestBody Notice notice){
 		return noticeRepository.save(notice);
+	}
+	
+	//create a new notice --including notice contents of type image
+	
+	@PostMapping("/notices-with-contents")
+	public Notice createNewNoticeWithImageContents(
+			@RequestParam("title") String title,
+			@RequestParam("message") String message,
+			@RequestParam("openingDate") String openingDate,
+			@RequestParam("closingDate") String closingDate,
+			@RequestParam("imageContents") MultipartFile[]  imageContents) throws Exception{
+		//create Notice object
+		Notice notice = new Notice();
+		//set notice values
+		notice.setTitle(title);
+		notice.setMessage(message);
+		try {
+			notice.setOpeningDate(new SimpleDateFormat("dd/MM/yyyy").parse(openingDate));
+			notice.setClosingDate(new SimpleDateFormat("dd/MM/yyyy").parse(closingDate));
+			notice.setCreatedDate(Calendar.getInstance().getTime());
+		} catch (ParseException e) {
+			throw new ParseException(e.getMessage(), e.getErrorOffset());
+		}
+		//save notice
+		Notice insertedNotice = noticeRepository.save(notice);
+		
+		//for each attached imageContent: store the Image to the upload dir --- prepare Notice Content and insert to the NoticeContent table
+		for (MultipartFile imageContent : imageContents) {
+			String fileName = fileStorageService.storeFile(imageContent);
+			NoticeContent noticeContent = new NoticeContent();
+			noticeContent.setType("image");
+			noticeContent.setNoticeURL(fileName);
+			noticeContent.setNotice(insertedNotice);
+			//insert to the database
+			noticeContentRepository.save(noticeContent);
+		}
+		return insertedNotice;
 	}
 	
 	//update a notice

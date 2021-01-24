@@ -23,33 +23,5 @@ import com.tibebues.enb.service.FileStorageService;
 @RestController
 public class NoticeContentController {
 	
-	@Autowired
-	private NoticeContentRepository noticeContentRepository;
-	@Autowired
-	private NoticeRepository noticeRepository;
-	
-	@Autowired
-	private FileStorageService fileStorageService;
-	
-	
-	
-	@PostMapping("/notices/{noticeId}/notice-contents")
-	public NoticeContent createNoticeContent(@PathVariable(value = "noticeId") long noticeId, 
-			@RequestParam("imageFile") MultipartFile imageFile, 
-			@RequestParam("type") String contentType
-			) throws ResourceNotFoundException {
-		
-		//get the image file and upload to the upload directory, and store the file name to the database at the content_uri attri
-		//store the file
-		String fileName = fileStorageService.storeFile(imageFile);
-		
-		return noticeRepository.findById(noticeId).map(notice -> {
-			NoticeContent noticeContent = new NoticeContent();
-			noticeContent.setNotice(notice);
-			noticeContent.setType(contentType);
-			
-			return noticeContentRepository.save(noticeContent);
-			}).orElseThrow( ()->new ResourceNotFoundException("notice not fund"));
-	}
 
 }
