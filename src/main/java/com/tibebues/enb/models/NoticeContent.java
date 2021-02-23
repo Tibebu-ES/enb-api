@@ -33,7 +33,7 @@ public class NoticeContent {
 	
 	
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "notice_id")
 	private Notice notice;
 

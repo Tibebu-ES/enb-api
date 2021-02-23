@@ -1,5 +1,6 @@
 package com.tibebues.enb.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -67,5 +68,19 @@ public class FileStorageService {
             throw new FileNotFoundException("File not found " + fileName, ex);
         }
     }
+	
+	//delete a file if exist
+	
+	public Boolean deleteFile(String fileName) {
+		Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+		Boolean status=false;
+		try {
+		    status =Files.deleteIfExists(filePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return status;
+	}
 
 }

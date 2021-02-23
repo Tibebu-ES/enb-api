@@ -129,7 +129,7 @@ public class NoticeController {
 /*** ACCESS NOTICE CONTENTS*****************************************************/	
 	//get List of NoticeContent ID - given Notice id
 	@GetMapping("/notice-contents/{noticeId}")
-	public ResponseEntity<List<Long>> getAllNoticeContentIdOfNoticeId(@PathVariable long noticeId){
+	public ResponseEntity<List<Long>> getAllNoticeContentIdOfNotice(@PathVariable long noticeId){
 		List<NoticeContent> noticeContents = noticeContentRepository.findByNoticeId(noticeId);
 		List<Long> response = new ArrayList<>();
 		for (NoticeContent noticeContent : noticeContents) {
@@ -159,5 +159,45 @@ public class NoticeController {
 	}		
 /*** END --- ACCESS NOTICE CONTENTS  *****************************************************/			
 	
+/*** DELETE NOTICE CONTENT|S*****************************************************/	
 	
+		/**
+		 * Delete all notice contents of a Notice 
+		 * @param noticeId
+		 * @return 
+		 */
+	@DeleteMapping("/notice-contents/{noticeId}")
+	public ResponseEntity<Map<String, Boolean>> deleteNoticeContentsOfNotice(@PathVariable long noticeId){
+			List<NoticeContent> noticeContents = noticeContentRepository.findByNoticeId(noticeId);
+			noticeContentRepository.deleteInBatch(noticeContents);
+			for (NoticeContent noticeContent : noticeContents) {
+				//if content type is image, delete the image file from the filestorage
+				if(noticeContent.getType().contentEquals(NoticeContent.CONTENT_TYPE_IMAGE))
+					 fileStorageService.deleteFile(noticeContent.getNoticeURL());
+			}
+			Map<String, Boolean> response = new HashMap<>();
+			response.put("deleted", true);
+			return ResponseEntity.ok(response);
+	}
+	
+	/**
+	 * Delete a particular Notice Content of id
+	 * @param id
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
+	@DeleteMapping("/notice-content/{id}")
+	public ResponseEntity<Map<String, Boolean>> deleteNoticeContentById(@PathVariable long id) throws ResourceNotFoundException{
+			NoticeContent noticeContent = noticeContentRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Notice Content Not found with id="+id));
+			noticeContentRepository.delete(noticeContent);
+			//if content type is image, delete the image file from the filestorage
+			if(noticeContent.getType().contentEquals(NoticeContent.CONTENT_TYPE_IMAGE))
+				 fileStorageService.deleteFile(noticeContent.getNoticeURL());
+			Map<String, Boolean> response = new HashMap<>();
+			response.put("deleted", true);
+			return ResponseEntity.ok(response);
+	}
+		
+		
+/*** END -  DELETE NOTICE CONTENT|S*****************************************************/			
 }
