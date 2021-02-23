@@ -3,6 +3,7 @@ package com.tibebues.enb.controllers;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,8 +61,8 @@ public class NoticeController {
 		return noticeRepository.save(notice);
 	}
 	
-	//create a new notice --including notice contents of type image
 	
+	//create a new notice --including notice contents of type image
 	@PostMapping("/notices-with-contents")
 	public Notice createNewNoticeWithImageContents(
 			@RequestParam("title") String title,
@@ -120,5 +122,42 @@ public class NoticeController {
 		return ResponseEntity.ok(response);
 	}
 	
-
+	
+	
+    //related to notice's contents
+	
+/*** ACCESS NOTICE CONTENTS*****************************************************/	
+	//get List of NoticeContent ID - given Notice id
+	@GetMapping("/notice-contents/{noticeId}")
+	public ResponseEntity<List<Long>> getAllNoticeContentIdOfNoticeId(@PathVariable long noticeId){
+		List<NoticeContent> noticeContents = noticeContentRepository.findByNoticeId(noticeId);
+		List<Long> response = new ArrayList<>();
+		for (NoticeContent noticeContent : noticeContents) {
+			response.add(noticeContent.getId());
+		}
+		return ResponseEntity.ok(response);
+	}
+	
+	//for noticeContent of type image ---get Image of the NoticeContent given  Notice content id 
+	//retun 404 response if content type is not image
+		@GetMapping("/notice-content-image/{id}")
+	public ResponseEntity<Resource> getNoticeContentById(@PathVariable long id) throws ResourceNotFoundException{
+		NoticeContent noticeContent = noticeContentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Notice Content not found with id"+id));
+		if(noticeContent.getType().contentEquals(NoticeContent.CONTENT_TYPE_VIDEO))
+			throw new ResourceNotFoundException("Notice Content not image type with id"+id);
+		return ResponseEntity.ok(fileStorageService.loadFileAsResource(noticeContent.getNoticeURL()));
+	}
+		
+	//for noticeContent of type video ---get URL of the NoticeContent given  Notice content id 
+	//retun 404 response if content type is not video
+		@GetMapping("/notice-content-video/{id}")
+	public ResponseEntity<String> getNoticeContentURLById(@PathVariable long id) throws ResourceNotFoundException{
+		NoticeContent noticeContent = noticeContentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Notice Content not found with id"+id));
+		if(noticeContent.getType().contentEquals(NoticeContent.CONTENT_TYPE_IMAGE))
+			throw new ResourceNotFoundException("Notice Content not video type with id"+id);
+		return ResponseEntity.ok(noticeContent.getNoticeURL());
+	}		
+/*** END --- ACCESS NOTICE CONTENTS  *****************************************************/			
+	
+	
 }

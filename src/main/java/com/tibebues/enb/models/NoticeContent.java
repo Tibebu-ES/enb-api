@@ -17,6 +17,9 @@ import javax.persistence.Table;
 @Table(name="noticeContent")
 public class NoticeContent {
 	
+	public static final String CONTENT_TYPE_IMAGE = "image";
+	public static final String CONTENT_TYPE_VIDEO = "video";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
