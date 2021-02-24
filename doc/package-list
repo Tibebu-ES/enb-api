@@ -1,8 +1,0 @@
-com.tibebues.enb
-com.tibebues.enb.controllers
-com.tibebues.enb.exceptions
-com.tibebues.enb.models
-com.tibebues.enb.payload
-com.tibebues.enb.property
-com.tibebues.enb.repositories
-com.tibebues.enb.service
