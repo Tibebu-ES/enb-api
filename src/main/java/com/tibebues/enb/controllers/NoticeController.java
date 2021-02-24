@@ -62,6 +62,16 @@ public class NoticeController {
 		return ResponseEntity.ok(notice);
 	}
 	
+	/**
+	 * Get list of notices that need to be shown today.
+	 * @return
+	 * Each notice N such that 
+	 * N.OpeningDate <= Today <= N.ClosingDate
+	 */
+	@GetMapping("/notices-today")
+	public List<Notice> getTodayNotices(){
+		return noticeRepository.findNoticesForToday(Calendar.getInstance().getTime());
+	}
 	
 	/**
 	 * Create a new notice. With out notice contents.
