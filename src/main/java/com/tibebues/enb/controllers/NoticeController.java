@@ -204,7 +204,7 @@ public class NoticeController {
 /*** ADD  NOTICE CONTENT|S* *****************************************************/
 	
 	/**
-	 * Add notice contents of type image to a notice
+	 * Add notice contents of type image to an existing notice
 	 * @param noticeId
 	 * @param imageContents array of image files
 	 * @return
@@ -233,6 +233,14 @@ public class NoticeController {
 	}
 	
 	
+	
+	/**
+	 * Add notice contents of type video to an existing  notice
+	 * @param noticeId
+	 * @param videoURLs
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
 	@PostMapping("/notice-contents-video")
 	public List<NoticeContent> addNoticeContentsTypeVideo(
 			@RequestParam("noticeId") Long noticeId,
