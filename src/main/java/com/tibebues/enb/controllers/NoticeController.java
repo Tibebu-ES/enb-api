@@ -199,5 +199,63 @@ public class NoticeController {
 	}
 		
 		
-/*** END -  DELETE NOTICE CONTENT|S*****************************************************/			
+/*** END -  DELETE NOTICE CONTENT|S*****************************************************/	
+	
+/*** ADD  NOTICE CONTENT|S* *****************************************************/
+	
+	/**
+	 * Add notice contents of type image to a notice
+	 * @param noticeId
+	 * @param imageContents array of image files
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
+	@PostMapping("/notice-contents-image")
+	public List<NoticeContent> addNoticeContentsTypeImage(
+			@RequestParam("noticeId") Long noticeId,
+			@RequestParam("imageContents") MultipartFile[] imageContents ) throws ResourceNotFoundException
+	{
+		//get the notice
+		Notice notice = noticeRepository.findById(noticeId).orElseThrow(()-> new ResourceNotFoundException("Notice not found with id"+noticeId));
+		
+		List<NoticeContent> noticeContents = new ArrayList<>();
+		for (MultipartFile imageContent : imageContents) {
+			String fileName = fileStorageService.storeFile(imageContent);
+			NoticeContent noticeContent = new NoticeContent();
+			noticeContent.setType(NoticeContent.CONTENT_TYPE_IMAGE);
+			noticeContent.setNoticeURL(fileName);
+			noticeContent.setNotice(notice);
+			noticeContents.add(noticeContent);
+		}
+		
+		return noticeContentRepository.saveAll(noticeContents);
+		
+	}
+	
+	
+	@PostMapping("/notice-contents-video")
+	public List<NoticeContent> addNoticeContentsTypeVideo(
+			@RequestParam("noticeId") Long noticeId,
+			@RequestParam("videoURLs") String[] videoURLs ) throws ResourceNotFoundException
+	{
+		//get the notice
+		Notice notice = noticeRepository.findById(noticeId).orElseThrow(()-> new ResourceNotFoundException("Notice not found with id"+noticeId));
+		
+		List<NoticeContent> noticeContents = new ArrayList<>();
+		for (String videoURL : videoURLs) {
+			NoticeContent noticeContent = new NoticeContent();
+			noticeContent.setType(NoticeContent.CONTENT_TYPE_VIDEO);
+			noticeContent.setNoticeURL(videoURL);
+			noticeContent.setNotice(notice);
+			noticeContents.add(noticeContent);
+		}
+		
+		return noticeContentRepository.saveAll(noticeContents);
+		
+	}
+	
+	
+/*** END  NOTICE CONTENT|S*****************************************************/	
+	
 }
+

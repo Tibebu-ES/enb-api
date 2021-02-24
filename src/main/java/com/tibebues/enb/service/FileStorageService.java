@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Timestamp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -38,7 +39,9 @@ public class FileStorageService {
 	//
 	public String storeFile(MultipartFile file) {
 		// Normalize file name
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		//add the time statmp before the file name...sothat file with similar name dont get delete
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String fileName = StringUtils.cleanPath(timestamp.getTime()+file.getOriginalFilename());
         try {
             // Check if the file's name contains invalid characters
             if (fileName.contains("..")) {
