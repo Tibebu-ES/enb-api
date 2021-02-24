@@ -40,29 +40,50 @@ public class NoticeController {
 	@Autowired
 	private FileStorageService fileStorageService;
 	
-	//get All notices 
+	/**
+	 * Get the List of all notices
+	 * @return
+	 */
 	@GetMapping("/notices")
 	public List<Notice> getAllNotices() {
 		return noticeRepository.findAll();
 	}
 	
-	//get notice by id
+
+	/**
+	 * Get a specific notice by ID
+	 * @param noticeId
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
 	@GetMapping("/notices/{id}")
 	public ResponseEntity<Notice> getNoticeById(@PathVariable(value = "id") long noticeId) throws ResourceNotFoundException{
 		Notice notice  = noticeRepository.findById(noticeId).orElseThrow(() -> new ResourceNotFoundException("Notice not found with id="+noticeId));
 		return ResponseEntity.ok(notice);
 	}
 	
-	//get notice by opening date and closing date - tobe done
 	
-	//create new Notice
+	/**
+	 * Create a new notice. With out notice contents.
+	 * @param notice
+	 * @return
+	 */
 	@PostMapping("/notices")
 	public Notice createNewNotice(@RequestBody Notice notice){
 		return noticeRepository.save(notice);
 	}
 	
 	
-	//create a new notice --including notice contents of type image
+	/**
+	 * Create a new Notice including notice contents of image type
+	 * @param title
+	 * @param message
+	 * @param openingDate
+	 * @param closingDate
+	 * @param imageContents - array of images
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("/notices-with-contents")
 	public Notice createNewNoticeWithImageContents(
 			@RequestParam("title") String title,
@@ -98,7 +119,14 @@ public class NoticeController {
 		return insertedNotice;
 	}
 	
-	//update a notice
+
+	/**
+	 * Update an existing notice
+	 * @param id
+	 * @param newNotice
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
 	@PutMapping("/notices/{id}")
 	public ResponseEntity<Notice> updateNotice(@PathVariable(value = "id")long id, @RequestBody Notice newNotice) throws ResourceNotFoundException{
 		Notice oldNotice = noticeRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Notice not found with id="+id));
@@ -112,7 +140,12 @@ public class NoticeController {
 		return ResponseEntity.ok(updatedNotice);
 	}
 	
-	//delete Notice
+	/**
+	 * Delete an existing notice
+	 * @param id
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
 	@DeleteMapping("/notices/{id}")
 	public ResponseEntity<Map<String, Boolean>> deleteNotice(@PathVariable long id) throws ResourceNotFoundException{
 		Notice notice = noticeRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Notice not found with id="+id));
@@ -124,10 +157,15 @@ public class NoticeController {
 	
 	
 	
-    //related to notice's contents
 	
 /*** ACCESS NOTICE CONTENTS*****************************************************/	
-	//get List of NoticeContent ID - given Notice id
+
+	/**
+	 * get list of NoticeContents' ID of an existing  Notice 
+	 * @param noticeId
+	 * @return array of IDs of all notice contents associated with the noticeId
+	 * 
+	 */
 	@GetMapping("/notice-contents/{noticeId}")
 	public ResponseEntity<List<Long>> getAllNoticeContentIdOfNotice(@PathVariable long noticeId){
 		List<NoticeContent> noticeContents = noticeContentRepository.findByNoticeId(noticeId);
@@ -138,8 +176,14 @@ public class NoticeController {
 		return ResponseEntity.ok(response);
 	}
 	
-	//for noticeContent of type image ---get Image of the NoticeContent given  Notice content id 
-	//retun 404 response if content type is not image
+	
+	/**
+	 * Get a specific Notice content of image type. Returns the image.
+	 * @param id - Id of the notice content
+	 * @return Image Resource
+	 * return 404 response if content type is not image
+	 * @throws ResourceNotFoundException
+	 */
 		@GetMapping("/notice-content-image/{id}")
 	public ResponseEntity<Resource> getNoticeContentById(@PathVariable long id) throws ResourceNotFoundException{
 		NoticeContent noticeContent = noticeContentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Notice Content not found with id"+id));
@@ -148,8 +192,13 @@ public class NoticeController {
 		return ResponseEntity.ok(fileStorageService.loadFileAsResource(noticeContent.getNoticeURL()));
 	}
 		
-	//for noticeContent of type video ---get URL of the NoticeContent given  Notice content id 
-	//retun 404 response if content type is not video
+	
+		/**
+		 * Get a specific Notice content of video type. Returns the video url.
+		 * @param id - Id of the notice content
+		 * @return Video url 
+		 * @throws ResourceNotFoundException
+		 */
 		@GetMapping("/notice-content-video/{id}")
 	public ResponseEntity<String> getNoticeContentURLById(@PathVariable long id) throws ResourceNotFoundException{
 		NoticeContent noticeContent = noticeContentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Notice Content not found with id"+id));
