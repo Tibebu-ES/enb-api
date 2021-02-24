@@ -2,7 +2,7 @@
 ENB - E-Noticing System API
 # Description
 This is an API implementation for the Electronic Noticing System web APP. <br/>
-*Java Spring Boot* Framework is used.
+**Java Spring MVC** is used.
 
 # Documentation
 Documentation can be found [here](https://tibebu-es.github.io/enb-api/)
