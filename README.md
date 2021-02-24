@@ -21,15 +21,15 @@ spring.jpa.properties..hibernate.dialect = org.hibernate.dialect.PostgreSQLDiale
 
 ### File Uploading Properties
 #### MULTIPART (MultipartProperties)
-##### Enable multipart uploads
+##### <ins> Enable multipart uploads </ins>
 spring.servlet.multipart.enabled=true
-##### Threshold after which files are written to disk.
+##### <ins> Threshold after which files are written to disk. </ins>
 spring.servlet.multipart.file-size-threshold=2KB
-##### Max file size.
+##### <ins> Max file size. </ins>
 spring.servlet.multipart.max-file-size=200MB
-##### Max Request Size
+##### <ins> Max Request Size </ins>
 spring.servlet.multipart.max-request-size=215MB
-##### File Storage Properties
+##### <ins> File Storage Properties </ins>
 file.upload-dir=./uploads
 
 # Features
